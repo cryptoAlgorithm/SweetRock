@@ -6,16 +6,14 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.cryptoalgo.sweetRock.ui.theme.SweetRockTheme
 import kotlinx.coroutines.launch
@@ -45,7 +43,7 @@ fun Content() {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState()
-    val items = remember { listOf("Songs", "Artists", "Playlists") }
+    val items = remember { listOf(Pair("Catalog", R.drawable.food_menu), Pair("Cart", R.drawable.cart), Pair("You", R.drawable.account)) }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
@@ -54,8 +52,8 @@ fun Content() {
             NavigationBar {
                 items.forEachIndexed { index, item ->
                     NavigationBarItem(
-                        icon = { Icon(Icons.Filled.Favorite, contentDescription = item) },
-                        label = { Text(item) },
+                        icon = { Icon(painterResource(item.second), contentDescription = item.first) },
+                        label = { Text(item.first) },
                         selected = pagerState.targetPage == index,
                         onClick = { scope.launch { pagerState.animateScrollToPage(index) }}
                     )
@@ -66,9 +64,9 @@ fun Content() {
             LargeTopAppBar(
                 title = {
                     Column {
-                        Text(text = "Sweet Rock")
-                        AnimatedContent(targetState = items[pagerState.targetPage]) {
-                            Text(text = it, style = MaterialTheme.typography.bodySmall)
+                        Text("Sweet Rock")
+                        AnimatedContent(targetState = items[pagerState.targetPage].first) { page ->
+                            Text(page, style = MaterialTheme.typography.bodySmall)
                         }
                     }
                 },
