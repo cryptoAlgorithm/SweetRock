@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "716609191868",
+    "project_id": "cs-sweet-rock",
+    "storage_bucket": "cs-sweet-rock.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:716609191868:android:6ab067355a06daf3e875b9",
+        "android_client_info": {
+          "package_name": "com.cryptoalgo.sweetRock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "716609191868-okousfpdqjarkcgrdsieiamdl2vbrukj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cryptoalgo.sweetRock",
+            "certificate_hash": "d7b05889d204865a97e7f779d76b8b8050f59cee"
+          }
+        },
+        {
+          "client_id": "716609191868-rqi4k4dph17te4k47odf0tukcrkq5pco.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCj462WRp64gB7LMSLLyw_pDyFb6zSX_vo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "716609191868-rqi4k4dph17te4k47odf0tukcrkq5pco.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
