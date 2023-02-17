@@ -12,6 +12,9 @@ import com.google.firebase.ktx.Firebase
  * Manages the business logic of the catalog
  */
 class CatalogViewModel: ViewModel() {
+    /**
+     * Represents an item in the catalog
+     */
     data class CatalogItem(
         @DocumentId
         val id: String = "",
@@ -25,16 +28,19 @@ class CatalogViewModel: ViewModel() {
     private val db = Firebase.firestore
     private var listener: ListenerRegistration? = null
 
+    init { registerListener() }
+
     /**
      * Register a change listener on the database document to
      * populate and keep catalog fresh.
      */
-    fun registerListener() {
+    private fun registerListener() {
         // Unregister existing listeners first
         listener?.remove()
         listener = db.collection("catalog").addSnapshotListener { snap, err ->
             if (err != null) {
-                listener?.remove()
+                // No need to detach listener on error
+                listener = null
                 return@addSnapshotListener
             }
 
