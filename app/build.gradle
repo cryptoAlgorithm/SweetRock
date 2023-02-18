@@ -80,4 +80,8 @@ dependencies {
     // App Check
     implementation 'com.google.firebase:firebase-appcheck-playintegrity' // Play Integrity
     implementation 'com.google.firebase:firebase-appcheck-debug:16.1.1'  // Debug
+
+    // Play Services
+    implementation 'com.google.android.gms:play-services-auth:20.4.1'
+
 }

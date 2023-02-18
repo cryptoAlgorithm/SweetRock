@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Sweet Rock</string>
+
+    <string name="server_client_id">716609191868-rqi4k4dph17te4k47odf0tukcrkq5pco.apps.googleusercontent.com</string>
 </resources>
