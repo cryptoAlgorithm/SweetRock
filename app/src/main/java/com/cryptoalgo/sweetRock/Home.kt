@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import com.cryptoalgo.sweetRock.account.AccountLanding
 import com.cryptoalgo.sweetRock.catalog.Catalog
 import kotlinx.coroutines.launch
 
@@ -86,9 +87,13 @@ fun Home(navigateToItemDetail: (String) -> Unit) {
         },
         content = { innerPadding ->
             HorizontalPager(
-                pageCount = items.count(), contentPadding = innerPadding, state = pagerState) { page ->
+                pageCount = items.count(),
+                contentPadding = innerPadding,
+                state = pagerState
+            ) { page ->
                 when (page) {
                     0 -> Catalog(navigateToDetail = { navigateToItemDetail(it) })
+                    2 -> AccountLanding()
                     else -> Text(
                         text = "Page: $page",
                         modifier = Modifier.fillMaxSize()

@@ -10,8 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,16 +33,13 @@ fun Catalog(
         contentPadding = PaddingValues(16.dp)
     ) {
         items(items = model.catalog, key = { it.id }) { item ->
-            Card(
-                onClick = {
-                    navigateToDetail(item.id)
-                },
-                colors = CardDefaults.outlinedCardColors(),
-                border = CardDefaults.outlinedCardBorder()
+            ElevatedCard(
+                onClick = { navigateToDetail(item.id) },
             ) {
-                Column(modifier = Modifier
-                    .padding(12.dp, 8.dp)
-                    .fillMaxWidth()
+                Column(
+                    Modifier
+                        .padding(12.dp, 8.dp)
+                        .fillMaxWidth()
                 ) {
                     Text(text = item.title, style = MaterialTheme.typography.titleMedium)
                     Text(text = item.description, modifier = Modifier.padding(top = 4.dp))

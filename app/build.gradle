@@ -76,6 +76,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:31.2.2')
     implementation 'com.google.firebase:firebase-analytics-ktx' // Analytics
     implementation 'com.google.firebase:firebase-firestore-ktx' // Firestore
+    implementation 'com.google.firebase:firebase-auth-ktx'      // Auth
     // App Check
     implementation 'com.google.firebase:firebase-appcheck-playintegrity' // Play Integrity
     implementation 'com.google.firebase:firebase-appcheck-debug:16.1.1'  // Debug
