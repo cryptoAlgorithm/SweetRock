@@ -49,6 +49,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.cryptoalgo.sweetRock.MainViewModel
 import com.cryptoalgo.sweetRock.R
 import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.launch
@@ -121,7 +122,8 @@ private fun SignedInLanding(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SignInLaunchpad(
-    model: AccountViewModel = viewModel()
+    model: AccountViewModel = viewModel(),
+    mainModel: MainViewModel = viewModel(),
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -152,7 +154,7 @@ private fun SignInLaunchpad(
                 try {
                     model.signIn(idToken)
                 } catch (e: Exception) {
-
+                    mainModel.snackbarHostState.showSnackbar("Failed to sign you in with Google")
                 } finally {
                     loadingMethod = null
                 }
@@ -224,7 +226,9 @@ private fun SignInLaunchpad(
             ) {
                 if (loadingMethod == 0) {
                     CircularProgressIndicator(
-                        Modifier.padding(end = 8.dp).size(16.dp),
+                        Modifier
+                            .padding(end = 8.dp)
+                            .size(16.dp),
                         strokeWidth = 2.dp,
                         strokeCap = StrokeCap.Round
                     )
@@ -250,13 +254,16 @@ private fun SignInLaunchpad(
                     } catch (e: Exception) {
                         // Problem initiating sign in flow
                         loadingMethod = null
+                        mainModel.snackbarHostState.showSnackbar("Could not initiate Google sign-in, please ensure Google Play services is present and updated")
                     }
                 }},
                 Modifier.fillMaxWidth()
             ) {
                 if (loadingMethod == 1) {
                     CircularProgressIndicator(
-                        Modifier.padding(end = 8.dp).size(16.dp),
+                        Modifier
+                            .padding(end = 8.dp)
+                            .size(16.dp),
                         strokeWidth = 2.dp,
                         strokeCap = StrokeCap.Round
                     )
