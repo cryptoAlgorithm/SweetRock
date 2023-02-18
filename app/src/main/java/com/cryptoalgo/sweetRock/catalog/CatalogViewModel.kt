@@ -1,4 +1,4 @@
-package com.cryptoalgo.sweetRock
+package com.cryptoalgo.sweetRock.catalog
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel

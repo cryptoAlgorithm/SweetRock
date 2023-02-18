@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import com.cryptoalgo.sweetRock.catalog.Catalog
 import kotlinx.coroutines.launch
 
 @OptIn(
