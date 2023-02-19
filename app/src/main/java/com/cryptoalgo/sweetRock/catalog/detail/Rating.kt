@@ -1,4 +1,4 @@
-package com.cryptoalgo.sweetRock.catalog
+package com.cryptoalgo.sweetRock.catalog.detail
 
 data class Rating(
     val userID: String = "",

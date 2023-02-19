@@ -2,6 +2,7 @@ package com.cryptoalgo.sweetRock.catalog
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import com.cryptoalgo.sweetRock.catalog.detail.Rating
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.ListenerRegistration
@@ -36,12 +37,14 @@ class CatalogViewModel: ViewModel() {
                 return@suspendCoroutine
             }
             db.collection("ratings")
-                .add(Rating(
+                .add(
+                    Rating(
                     userID = user.uid,
                     foodID = id,
                     rating = rating,
                     review = review
-                ))
+                )
+                )
                 .addOnSuccessListener { _ ->
                     it.resume(Unit)
                 }
