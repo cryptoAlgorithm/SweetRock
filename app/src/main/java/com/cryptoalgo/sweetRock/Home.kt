@@ -1,12 +1,14 @@
 package com.cryptoalgo.sweetRock
 
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
@@ -22,9 +24,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cryptoalgo.sweetRock.account.AccountLanding
+import com.cryptoalgo.sweetRock.cart.Cart
+import com.cryptoalgo.sweetRock.cart.CartViewModel
 import com.cryptoalgo.sweetRock.catalog.Catalog
 import kotlinx.coroutines.launch
 
@@ -35,6 +40,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun Home(
     model: MainViewModel = viewModel(),
+    cartVM: CartViewModel = viewModel(LocalContext.current as ComponentActivity),
     navigateToItemDetail: (String) -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -48,7 +54,14 @@ fun Home(
             NavigationBar {
                 items.forEachIndexed { index, item ->
                     NavigationBarItem(
-                        icon = { Icon(painterResource(item.second), contentDescription = item.first) },
+                        // Include badge indicating number of items in cart
+                        icon = {
+                            BadgedBox(badge = {
+                                if (index == 1) Badge { Text("${cartVM.cart.size}") }
+                            }) {
+                                Icon(painterResource(item.second), item.first)
+                            }
+                        },
                         label = { Text(item.first) },
                         selected = pagerState.targetPage == index,
                         onClick = { scope.launch { pagerState.animateScrollToPage(index) }}
@@ -70,19 +83,6 @@ fun Home(
             )
         },
         snackbarHost = { SnackbarHost(model.snackbarHostState) },
-        /* floatingActionButton = {
-            var clickCount by remember { mutableStateOf(0) }
-            ExtendedFloatingActionButton(
-                onClick = {
-                    // show snackbar as a suspend function
-                    scope.launch {
-                        model.snackbarHostState.showSnackbar(
-                            "Snackbar # ${++clickCount}"
-                        )
-                    }
-                }
-            ) { Text("Show snackbar") }
-        }, */
         content = { innerPadding ->
             HorizontalPager(
                 pageCount = items.count(),
@@ -91,11 +91,8 @@ fun Home(
             ) { page ->
                 when (page) {
                     0 -> Catalog(navigateToDetail = { navigateToItemDetail(it) })
+                    1 -> Cart()
                     2 -> AccountLanding()
-                    else -> Text(
-                        text = "Page: $page",
-                        modifier = Modifier.fillMaxSize()
-                    )
                 }
             }
         }

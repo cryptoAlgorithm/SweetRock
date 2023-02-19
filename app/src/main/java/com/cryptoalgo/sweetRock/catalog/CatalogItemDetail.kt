@@ -1,5 +1,6 @@
 package com.cryptoalgo.sweetRock.catalog
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,12 +30,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -43,6 +39,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -51,29 +48,22 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.cryptoalgo.sweetRock.MainViewModel
 import com.cryptoalgo.sweetRock.R
-import kotlinx.coroutines.launch
+import com.cryptoalgo.sweetRock.cart.CartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun CatalogItemDetail(
     itemID: String,
-    model: CatalogViewModel = viewModel(),
-    mainViewModel: MainViewModel = viewModel(),
+    model: CatalogViewModel = viewModel(LocalContext.current as ComponentActivity),
+    cartVM: CartViewModel = viewModel(LocalContext.current as ComponentActivity),
     onBack: () -> Unit,
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    var catalogItem by remember { mutableStateOf<CatalogViewModel.CatalogItem?>(null) }
+    val item = remember { model.getCatalogItem(itemID) } ?: return
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
-    // Get the selected catalog item here
-    // Doesn't work if it's retrieved during calculation of remember { }
-    LaunchedEffect(model.catalog) { catalogItem = model.getCatalogItem(itemID) }
 
     val cardOffset = LocalDensity.current.run { (-50).dp.roundToPx() }
 
-    val item = catalogItem ?: return
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -97,15 +87,17 @@ fun CatalogItemDetail(
                             tint = MaterialTheme.colorScheme.secondary
                         )
                     }
+                    val addedToCart = cartVM.inCart(item)
                     Button(
-                        onClick = { coroutineScope.launch {
-                            mainViewModel.snackbarHostState.showSnackbar("Test")
-                        }
-                            onBack()},
+                        onClick = {
+                            cartVM.addDish(item)
+                            onBack()
+                        },
                         Modifier.weight(1f),
-                        shape = MaterialTheme.shapes.small
+                        shape = MaterialTheme.shapes.small,
+                        enabled = !addedToCart
                     ) {
-                        Text("Add to Order")
+                        Text(if (addedToCart) "Added" else "Add to Order")
                     }
                 }
             }

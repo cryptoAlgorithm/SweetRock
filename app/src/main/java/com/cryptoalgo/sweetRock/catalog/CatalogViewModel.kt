@@ -24,8 +24,7 @@ class CatalogViewModel: ViewModel() {
         val coverImage: String? = null
     )
 
-    var catalog = mutableStateListOf<CatalogItem>()
-        private set
+    val catalog = mutableStateListOf<CatalogItem>()
 
     fun getCatalogItem(id: String): CatalogItem? = catalog.find { it.id == id }
 

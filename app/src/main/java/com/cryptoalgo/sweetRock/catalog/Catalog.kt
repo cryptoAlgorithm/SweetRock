@@ -1,5 +1,6 @@
 package com.cryptoalgo.sweetRock.catalog
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,6 +10,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -16,7 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun Catalog(
     navigateToDetail: (itemID: String) -> Unit,
-    model: CatalogViewModel = viewModel()
+    model: CatalogViewModel = viewModel(LocalContext.current as ComponentActivity)
 ) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
