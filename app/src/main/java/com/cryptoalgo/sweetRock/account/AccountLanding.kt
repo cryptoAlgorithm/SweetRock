@@ -28,7 +28,9 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -172,16 +174,20 @@ private fun SignInLaunchpad(
         mutableStateOf(TextFieldValue(""))
     }
 
+    LaunchedEffect(password.text, email.text) {
+        error = null
+    }
+
     ElevatedCard(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 0.dp),
         shape = MaterialTheme.shapes.large
     ) {
-        Column(Modifier.padding(8.dp, 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(Modifier.padding(8.dp, 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
                 "Welcome Back",
                 Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(top = 8.dp, bottom = 4.dp),
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.headlineMedium
@@ -190,7 +196,7 @@ private fun SignInLaunchpad(
                 text = "Place orders, add reviews and more!",
                 Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 4.dp), textAlign = TextAlign.Center,
+                    .padding(bottom = 8.dp), textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodySmall
             )
 
@@ -234,11 +240,21 @@ private fun SignInLaunchpad(
                         strokeCap = StrokeCap.Round
                     )
                 }
-                Text("Continue with Email")
+                Text("Continue with email")
+            }
+            TextButton(
+                onClick = {
+                },
+                Modifier
+                    .height(32.dp)
+                    .fillMaxWidth(),
+                contentPadding = PaddingValues(8.dp, 4.dp)
+            ) {
+                Text("Create new account")
             }
 
             Row(
-                Modifier.padding(vertical = 4.dp),
+                Modifier.padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
