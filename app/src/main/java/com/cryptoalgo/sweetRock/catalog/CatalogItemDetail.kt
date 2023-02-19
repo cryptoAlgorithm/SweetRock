@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -35,7 +34,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -55,6 +57,8 @@ fun CatalogItemDetail(
     // Get the selected catalog item here
     // Doesn't work if it's retrieved during calculation of remember { }
     LaunchedEffect(model.catalog) { catalogItem = model.getCatalogItem(itemID) }
+
+    val cardOffset = LocalDensity.current.run { (-50).dp.roundToPx() }
 
     val item = catalogItem ?: return
     Scaffold(
@@ -112,12 +116,18 @@ fun CatalogItemDetail(
             item {
                 Box(modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .offset(y = (-50).dp)
                     .fillMaxWidth()
+                    .layout { measurable, constraints ->
+                        val place = measurable.measure(constraints)
+                        layout(place.width, place.height + cardOffset) {
+                            place.placeRelative(0, cardOffset)
+                        }
+                    }
                 ) {
-                    ElevatedCard {
-                        Column(Modifier.padding(12.dp, 8.dp)) {
+                    ElevatedCard(Modifier.fillMaxWidth()) {
+                        Column(Modifier.padding(12.dp, 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(item.name, style = MaterialTheme.typography.headlineMedium)
+                            Text("$%.2f".format(item.price), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
                             Text(item.description, style = MaterialTheme.typography.bodyMedium)
                         }
                     }
