@@ -104,7 +104,7 @@ private fun SignedInLanding(
         shape = MaterialTheme.shapes.large
     ) {
         Column(Modifier.padding(16.dp, 12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("Your Account", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.headlineMedium)
+            Text("Your Account", fontWeight = FontWeight.Medium, style = MaterialTheme.typography.headlineMedium)
             user.displayName?.let {
                 Text(it)
             }
@@ -153,14 +153,14 @@ private fun SignInLaunchpad(
             coroutineScope.launch {
                 try {
                     model.signIn(idToken)
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     mainModel.snackbarHostState.showSnackbar("Failed to sign you in with Google")
                 } finally {
                     loadingMethod = null
                 }
             }
         } else {
-            Log.w("LOG", "Null Token")
+            Log.w(TAG, "Null Token")
             loadingMethod = null
         }
     }
@@ -182,7 +182,7 @@ private fun SignInLaunchpad(
                 Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.headlineMedium
             )
@@ -198,14 +198,15 @@ private fun SignInLaunchpad(
             OutlinedTextField(
                 value = email, onValueChange = { email = it },
                 Modifier.fillMaxWidth(),
-                label = { Text("Email") }
+                label = { Text("Email") },
+                isError = error != null
             )
             OutlinedTextField(
                 value = password, onValueChange = { password = it },
                 Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),
                 label = { Text("Password") },
-                supportingText = { if (error != null) Text(error!!) },
+                supportingText = { if (error != null) Text(error!!, Modifier.fillMaxWidth(), textAlign = TextAlign.Center) },
                 isError = error != null
             )
 
@@ -214,7 +215,7 @@ private fun SignInLaunchpad(
                     loadingMethod = 0
                     try {
                         model.signIn(email.text, password.text)
-                    } catch (e: Exception) {
+                    } catch (e: Throwable) {
                         error = e.message
                         Log.d("AccountLanding", "Sign in failed")
                     } finally {
@@ -251,7 +252,7 @@ private fun SignInLaunchpad(
                     loadingMethod = 1
                     try {
                         model.signIn(context, launcher)
-                    } catch (e: Exception) {
+                    } catch (e: Throwable) {
                         // Problem initiating sign in flow
                         loadingMethod = null
                         mainModel.snackbarHostState.showSnackbar("Could not initiate Google sign-in, please ensure Google Play services is present and updated")
