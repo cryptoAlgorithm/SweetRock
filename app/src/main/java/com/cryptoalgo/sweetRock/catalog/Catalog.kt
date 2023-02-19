@@ -2,24 +2,17 @@ package com.cryptoalgo.sweetRock.catalog
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Catalog(
     navigateToDetail: (itemID: String) -> Unit,
@@ -33,18 +26,7 @@ fun Catalog(
         contentPadding = PaddingValues(16.dp)
     ) {
         items(items = model.catalog, key = { it.id }) { item ->
-            ElevatedCard(
-                onClick = { navigateToDetail(item.id) },
-            ) {
-                Column(
-                    Modifier
-                        .padding(12.dp, 8.dp)
-                        .fillMaxWidth()
-                ) {
-                    Text(text = item.title, style = MaterialTheme.typography.titleMedium)
-                    Text(text = item.description, modifier = Modifier.padding(top = 4.dp))
-                }
-            }
+            CatalogCard(item) { navigateToDetail(it) }
         }
     }
 }

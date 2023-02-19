@@ -18,8 +18,10 @@ class CatalogViewModel: ViewModel() {
     data class CatalogItem(
         @DocumentId
         val id: String = "",
-        val title: String = "",
-        val description: String = ""
+        val name: String = "",
+        val description: String = "",
+        val price: Float = 0f,
+        val coverImage: String? = null
     )
 
     var catalog = mutableStateListOf<CatalogItem>()
