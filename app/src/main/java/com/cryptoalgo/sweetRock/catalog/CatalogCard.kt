@@ -52,8 +52,8 @@ fun CatalogCard(
                 Icon(
                     Icons.Rounded.Star, "Rating",
                     Modifier
-                        .size(20.dp)
-                        .padding(end = 2.dp),
+                        .padding(end = 2.dp)
+                        .size(20.dp),
                     tint = colorResource(R.color.star_orange)
                 )
                 Text("4.5", style = MaterialTheme.typography.labelMedium)
