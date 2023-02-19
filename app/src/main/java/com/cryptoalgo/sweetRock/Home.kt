@@ -34,8 +34,8 @@ import kotlinx.coroutines.launch
 )
 @Composable
 fun Home(
-    navigateToItemDetail: (String) -> Unit,
-    model: MainViewModel = viewModel()
+    model: MainViewModel = viewModel(),
+    navigateToItemDetail: (String) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState()

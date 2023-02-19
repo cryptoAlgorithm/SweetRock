@@ -27,6 +27,8 @@ class CatalogViewModel: ViewModel() {
     var catalog = mutableStateListOf<CatalogItem>()
         private set
 
+    fun getCatalogItem(id: String): CatalogItem? = catalog.find { it.id == id }
+
     private val db = Firebase.firestore
     private var listener: ListenerRegistration? = null
 

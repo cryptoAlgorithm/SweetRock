@@ -1,12 +1,12 @@
 package com.cryptoalgo.sweetRock
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.cryptoalgo.sweetRock.catalog.CatalogItemDetail
 
 @Composable
 fun SweetRockHost(
@@ -20,12 +20,12 @@ fun SweetRockHost(
         startDestination = startDestination
     ) {
         composable("home") {
-            Home(navigateToItemDetail = {
-                navController.navigate("foodDetail/$it")
-            })
+            Home { navController.navigate("foodDetail/$it") }
         }
         composable("foodDetail/{id}") {
-            Text(text = it.arguments!!.getString("id")!!)
+            CatalogItemDetail(itemID = it.arguments!!.getString("id")!!) {
+                navController.popBackStack("home", false)
+            }
         }
     }
 }
