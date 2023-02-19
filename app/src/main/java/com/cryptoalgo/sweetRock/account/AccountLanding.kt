@@ -16,11 +16,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,7 +39,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -53,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cryptoalgo.sweetRock.MainViewModel
 import com.cryptoalgo.sweetRock.R
+import com.cryptoalgo.sweetRock.util.SmallCircularLoader
 import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.launch
 
@@ -121,6 +119,14 @@ private fun SignedInLanding(
     }
 }
 
+/**
+ * An enum representing the current possible sign-in methods
+ */
+private enum class SignInMethod {
+    EMAIL_SIGN_IN, EMAIL_SIGN_UP,
+    GOOGLE
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SignInLaunchpad(
@@ -130,7 +136,7 @@ private fun SignInLaunchpad(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    var loadingMethod by remember { mutableStateOf<Int?>(null) }
+    var loadingMethod by remember { mutableStateOf<SignInMethod?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
 
     val launcher = rememberLauncherForActivityResult(
@@ -216,40 +222,45 @@ private fun SignInLaunchpad(
                 isError = error != null
             )
 
+            val canUseEmail = email.text.trim().isNotBlank() && password.text.isNotEmpty()
+                    && loadingMethod != SignInMethod.EMAIL_SIGN_IN && loadingMethod != SignInMethod.EMAIL_SIGN_UP
             Button(
                 onClick = { coroutineScope.launch {
-                    loadingMethod = 0
+                    loadingMethod = SignInMethod.EMAIL_SIGN_IN
                     try {
-                        model.signIn(email.text, password.text)
-                    } catch (e: Throwable) {
+                        model.signIn(email.text.trim(), password.text)
+                    } catch (e: Exception) {
                         error = e.message
-                        Log.d("AccountLanding", "Sign in failed")
+                        Log.w(TAG, "Sign in failed: ${e.message}")
                     } finally {
                         loadingMethod = null
                     }
                 }},
                 Modifier.fillMaxWidth(),
-                enabled = email.text.trim().isNotBlank() && password.text.isNotEmpty() && loadingMethod != 0
+                enabled = canUseEmail
             ) {
-                if (loadingMethod == 0) {
-                    CircularProgressIndicator(
-                        Modifier
-                            .padding(end = 8.dp)
-                            .size(16.dp),
-                        strokeWidth = 2.dp,
-                        strokeCap = StrokeCap.Round
-                    )
-                }
+                if (loadingMethod == SignInMethod.EMAIL_SIGN_IN) { SmallCircularLoader(Modifier.padding(end = 8.dp)) }
                 Text("Continue with email")
             }
             TextButton(
-                onClick = {
-                },
+                onClick = { coroutineScope.launch {
+                    loadingMethod = SignInMethod.EMAIL_SIGN_UP
+                    try {
+                        model.signUp(email.text.trim(), password.text)
+                    } catch (e: Exception) {
+                        error = e.message
+                        Log.w(TAG, "Sign up failed: ${e.message}")
+                    } finally {
+                        loadingMethod = null
+                    }
+                }},
                 Modifier
                     .height(32.dp)
                     .fillMaxWidth(),
-                contentPadding = PaddingValues(8.dp, 4.dp)
+                enabled = canUseEmail,
+                contentPadding = PaddingValues(8.dp, 4.dp),
             ) {
+                if (loadingMethod == SignInMethod.EMAIL_SIGN_UP) { SmallCircularLoader(Modifier.padding(end = 8.dp)) }
                 Text("Create new account")
             }
 
@@ -265,26 +276,20 @@ private fun SignInLaunchpad(
 
             FilledTonalButton(
                 onClick = { coroutineScope.launch {
-                    loadingMethod = 1
+                    loadingMethod = SignInMethod.GOOGLE
                     try {
                         model.signIn(context, launcher)
                     } catch (e: Throwable) {
                         // Problem initiating sign in flow
                         loadingMethod = null
-                        mainModel.snackbarHostState.showSnackbar("Could not initiate Google sign-in, please ensure Google Play services is present and updated")
+                        mainModel.snackbarHostState.showSnackbar("Could not initiate Google sign-in:\n${e.localizedMessage}")
                     }
                 }},
-                Modifier.fillMaxWidth()
+                Modifier.fillMaxWidth(),
+                enabled = loadingMethod != SignInMethod.GOOGLE
             ) {
-                if (loadingMethod == 1) {
-                    CircularProgressIndicator(
-                        Modifier
-                            .padding(end = 8.dp)
-                            .size(16.dp),
-                        strokeWidth = 2.dp,
-                        strokeCap = StrokeCap.Round
-                    )
-                }
+                if (loadingMethod == SignInMethod.GOOGLE) { SmallCircularLoader(Modifier.padding(end = 8.dp)) }
+                Image(painterResource(R.drawable.google), null, Modifier.padding(end = 6.dp))
                 Text("Continue with Google")
             }
         }

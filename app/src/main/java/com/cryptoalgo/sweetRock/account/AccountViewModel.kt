@@ -36,14 +36,31 @@ class AccountViewModel: ViewModel() {
         private set
 
     init {
-        auth.addAuthStateListener {
-            user = it.currentUser
-        }
+        // Keep current user updated
+        auth.addAuthStateListener { user = it.currentUser }
+    }
+
+    /**
+     * Create a new user with the specified email and password
+     */
+    @Throws(Exception::class)
+    suspend fun signUp(email: String, password: String) = suspendCoroutine<Unit> {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.i(TAG, "Successfully created new user account")
+                    it.resume(Unit)
+                } else {
+                    Log.w(TAG, "Could not create user ")
+                    it.resumeWithException(task.exception!!)
+                }
+            }
     }
 
     /**
      * Sign in with email and password
      */
+    @Throws(Exception::class)
     suspend fun signIn(email: String, password: String) = suspendCoroutine<Unit> {
         if (user != null) throw AuthErrors("Already signed in")
 
@@ -53,7 +70,7 @@ class AccountViewModel: ViewModel() {
                     Log.d(TAG, "Signed in successfully!")
                     it.resume(Unit)
                 } else {
-                    Log.d(TAG, "Sign in failure: ${task.exception}")
+                    Log.w(TAG, "Sign in failure: ${task.exception}")
                     it.resumeWithException(task.exception!!)
                 }
             }
@@ -92,7 +109,7 @@ class AccountViewModel: ViewModel() {
         } catch (e: Exception) {
             // No saved credentials found. Launch the One Tap sign-up flow, or
             // do nothing and continue presenting the signed-out UI.
-            Log.d(TAG, "Cannot start sign in flow: ${e.message}")
+            Log.w(TAG, "Cannot start sign in flow: ${e.message}")
             // Problem starting sign up flow
             throw e
         }
@@ -101,6 +118,7 @@ class AccountViewModel: ViewModel() {
     /**
      * Complete Google sign in flow with provided ID token
      */
+    @Throws(Exception::class)
     suspend fun signIn(idToken: String) = suspendCoroutine<Unit> {
         Log.d(TAG,  "Signing in with ID token")
         auth.signInWithCredential(GoogleAuthProvider.getCredential(idToken, null))
