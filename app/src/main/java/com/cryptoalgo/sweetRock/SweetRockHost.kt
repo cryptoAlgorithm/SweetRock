@@ -6,7 +6,10 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -65,7 +68,10 @@ fun SweetRockHost(
         }
         composable(
             "onboarding",
-            exitTransition = { fadeOut(tween(1000)) }
+            enterTransition = {
+                scaleIn(spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMediumLow), 2f) + fadeIn(tween(250))
+            },
+            exitTransition = { fadeOut(tween(1000)) + scaleOut(tween(750), 2f) }
         ) {
             Onboarding {
                 prefs.edit { putBoolean(ONBOARDING_SEEN_KEY, true) }
