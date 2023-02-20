@@ -1,31 +1,78 @@
 package com.cryptoalgo.sweetRock
 
+import android.content.Context
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import com.cryptoalgo.sweetRock.catalog.detail.CatalogItemDetail
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
+private const val ONBOARDING_SEEN_KEY = "onboarding_seen"
+
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SweetRockHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberAnimatedNavController(),
-    startDestination: String = "home"
 ) {
+    val context = LocalContext.current
+    val prefs = remember { context.getSharedPreferences("cryptoalgo.sweetRock", Context.MODE_PRIVATE) }
+
     AnimatedNavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = startDestination
+        startDestination = if (!prefs.getBoolean(ONBOARDING_SEEN_KEY, false)) "onboarding" else "home",
     ) {
         composable("home") {
-            Home { navController.navigate("foodDetail/$it") }
+            Home(
+                navigateToItemDetail = { navController.navigate("foodDetail/$it") },
+                navigateToAbout = { navController.navigate("about") },
+                navigateToOnboarding = {
+                    prefs.edit { remove(ONBOARDING_SEEN_KEY) }
+                    navController.navigate("onboarding") {
+                        popUpTo(0)
+                    }
+                }
+            )
+        }
+        composable(
+            "about",
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentScope.SlideDirection.Left,
+                    spring(Spring.DampingRatioLowBouncy, Spring.StiffnessLow)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentScope.SlideDirection.Right,
+                    spring(Spring.DampingRatioLowBouncy, Spring.StiffnessLow)
+                )
+            }
+        ) {
+            About { navController.popBackStack("home", false) }
+        }
+        composable(
+            "onboarding",
+            exitTransition = { fadeOut(tween(1000)) }
+        ) {
+            Onboarding {
+                prefs.edit { putBoolean(ONBOARDING_SEEN_KEY, true) }
+                navController.navigate("home") {
+                    popUpTo(0)
+                }
+            }
         }
         composable(
             "foodDetail/{id}",

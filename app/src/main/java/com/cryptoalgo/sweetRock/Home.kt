@@ -41,7 +41,9 @@ import kotlinx.coroutines.launch
 fun Home(
     model: MainViewModel = viewModel(LocalContext.current as ComponentActivity),
     cartVM: CartViewModel = viewModel(LocalContext.current as ComponentActivity),
-    navigateToItemDetail: (String) -> Unit
+    navigateToItemDetail: (String) -> Unit,
+    navigateToAbout: () -> Unit,
+    navigateToOnboarding: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState()
@@ -90,9 +92,12 @@ fun Home(
                 state = pagerState
             ) { page ->
                 when (page) {
-                    0 -> Catalog(navigateToDetail = { navigateToItemDetail(it) })
+                    0 -> Catalog(navigateToDetail = navigateToItemDetail)
                     1 -> Cart()
-                    2 -> AccountLanding()
+                    2 -> AccountLanding(
+                        navigateToOnboarding = navigateToOnboarding,
+                        navigateToAbout = navigateToAbout
+                    )
                 }
             }
         }

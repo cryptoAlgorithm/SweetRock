@@ -2,4 +2,10 @@
     <string name="app_name">Sweet Rock</string>
 
     <string name="server_client_id">716609191868-rqi4k4dph17te4k47odf0tukcrkq5pco.apps.googleusercontent.com</string>
+
+    <string name="sweet_rock_description">
+        Experience a world of flavors at Sweet Rock! Our restaurant offers a tantalizing selection
+        of global cuisine that will rock your taste buds. From savory to sweet, we\'ve got it all -
+        so come on in and satisfy your cravings with our delicious, multicultural menu.
+    </string>
 </resources>

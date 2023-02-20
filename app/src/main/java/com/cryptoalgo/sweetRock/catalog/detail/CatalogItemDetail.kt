@@ -108,7 +108,7 @@ fun CatalogItemDetail(
     val currentUID = authVM.user?.uid
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(item.name) },
