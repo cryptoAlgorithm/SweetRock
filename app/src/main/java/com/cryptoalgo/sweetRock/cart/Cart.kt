@@ -109,6 +109,7 @@ fun Cart(
                 TextButton(onClick = {
                     model.removeDish(removingDish!!)
                     removingDish = null
+                    mainVM.queueSnackbarMessage("Removed ${removingFood.name} from your cart")
                 }) {
                     Text("Remove")
                 }

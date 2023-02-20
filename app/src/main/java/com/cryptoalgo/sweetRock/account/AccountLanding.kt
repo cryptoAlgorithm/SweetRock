@@ -155,7 +155,7 @@ private fun SignedInLanding(
         Column(Modifier.padding(16.dp, 12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text("Your Account", fontWeight = FontWeight.Medium, style = MaterialTheme.typography.headlineMedium)
             user.displayName?.let {
-                Text(it)
+                if (it.isNotBlank()) Text(it.trim())
             }
             Text(user.email ?: "No Email")
             Button(onClick = { model.signOut() },
