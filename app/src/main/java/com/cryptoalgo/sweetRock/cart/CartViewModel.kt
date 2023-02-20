@@ -6,22 +6,37 @@ import androidx.lifecycle.ViewModel
 import com.cryptoalgo.sweetRock.catalog.CatalogViewModel
 
 class CartViewModel: ViewModel() {
-    val cart = mutableStateListOf<CatalogViewModel.CatalogItem>()
+    data class CartItem(val food: CatalogViewModel.CatalogItem, val quantity: Int)
+
+    val cart = mutableStateListOf<CartItem>()
 
     companion object {
         private const val TAG = "CartViewModel"
     }
 
     fun addDish(item: CatalogViewModel.CatalogItem) {
-        cart.add(item)
+        if (inCart(item)) {
+            Log.w(TAG, "Item ${item.id} already present in cart, ignoring")
+            return
+        }
+        cart.add(CartItem(item, 1))
         Log.d(TAG, "Added item, current cart: ${cart.toList()}")
     }
 
-    fun inCart(item: CatalogViewModel.CatalogItem): Boolean = cart.contains(item)
+    fun removeDish(item: CartItem) {
+        cart.remove(item)
+    }
+
+    fun changeQuantity(item: CartItem, quantity: Int) {
+        val idx = cart.indexOfFirst { it.food.id == item.food.id }
+        cart[idx] = CartItem(item.food, quantity)
+    }
+
+    fun inCart(item: CatalogViewModel.CatalogItem): Boolean = cart.any { it.food.id == item.id }
 
     val totalPrice: Float get() {
         var sum = 0f
-        cart.forEach { sum += it.price }
+        cart.forEach { sum += it.food.price }
         return sum
     }
 }

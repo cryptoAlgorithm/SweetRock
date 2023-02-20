@@ -50,7 +50,7 @@ fun Onboarding(onFinish: () -> Unit) {
             titleVisible = true
             handler.postDelayed({
                 goVisible = true
-            }, 2000)
+            }, 1500)
         }, 1200)
     }
 

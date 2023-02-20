@@ -37,7 +37,12 @@ fun SweetRockHost(
         navController = navController,
         startDestination = if (!prefs.getBoolean(ONBOARDING_SEEN_KEY, false)) "onboarding" else "home",
     ) {
-        composable("home") {
+        composable(
+            "home",
+            exitTransition = {
+                if (targetState.destination.route == "onboarding") fadeOut(tween(200)) else null
+            }
+        ) {
             Home(
                 navigateToItemDetail = { navController.navigate("foodDetail/$it") },
                 navigateToAbout = { navController.navigate("about") },
