@@ -4,6 +4,14 @@ import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.with
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -56,6 +64,7 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "Account"
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AccountLanding(
     model: AccountViewModel = viewModel()
@@ -83,9 +92,14 @@ fun AccountLanding(
         LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
             item { Spacer(Modifier.height(140.dp)) }
             item {
-                when {
-                    model.user != null -> SignedInLanding()
-                    else -> SignInLaunchpad()
+                AnimatedContent(
+                    targetState = model.user != null,
+                    transitionSpec = {
+                        (slideInVertically { height -> height } + fadeIn() with slideOutVertically { height -> height } + fadeOut()).using(SizeTransform(clip = false))
+                    }
+                ) {
+                    if (it) SignedInLanding()
+                    else SignInLaunchpad()
                 }
             }
         }
@@ -94,12 +108,13 @@ fun AccountLanding(
 
 @Composable
 private fun SignedInLanding(
+    modifier: Modifier = Modifier,
     model: AccountViewModel = viewModel()
 ) {
     val user = model.user ?: return // Return early if the current user is null
 
     ElevatedCard(
-        Modifier.fillMaxWidth(),
+        modifier.fillMaxWidth(),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 0.dp),
         shape = MaterialTheme.shapes.large
     ) {
