@@ -59,9 +59,8 @@ fun ReviewItem(
                 for (i in 1..5) {
                     Icon(
                         Icons.Rounded.Star, "Rating",
-                        Modifier
-                            .size(16.dp),
-                        tint = if (review.rating > i) colorResource(R.color.star_orange) else LocalContentColor.current.copy(alpha = 0.2f)
+                        Modifier.size(16.dp),
+                        tint = if (review.rating >= i) colorResource(R.color.star_orange) else LocalContentColor.current.copy(alpha = 0.2f)
                     )
                 }
                 val added = review.formatTimestamp()
