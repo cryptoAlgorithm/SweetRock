@@ -1,6 +1,8 @@
 package com.cryptoalgo.sweetRock.catalog.detail
 
 import androidx.activity.ComponentActivity
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,14 +26,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -52,7 +57,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.cryptoalgo.sweetRock.MainViewModel
 import com.cryptoalgo.sweetRock.R
+import com.cryptoalgo.sweetRock.account.AccountViewModel
 import com.cryptoalgo.sweetRock.cart.CartViewModel
 import com.cryptoalgo.sweetRock.catalog.CatalogViewModel
 import com.google.firebase.firestore.ktx.firestore
@@ -65,6 +72,8 @@ fun CatalogItemDetail(
     itemID: String,
     model: CatalogViewModel = viewModel(LocalContext.current as ComponentActivity),
     cartVM: CartViewModel = viewModel(LocalContext.current as ComponentActivity),
+    authVM: AccountViewModel = viewModel(LocalContext.current as ComponentActivity),
+    mainVM: MainViewModel = viewModel(LocalContext.current as ComponentActivity),
     onBack: () -> Unit,
 ) {
     val item = remember { model.getCatalogItem(itemID) } ?: return
@@ -84,6 +93,7 @@ fun CatalogItemDetail(
                 if (value != null) {
                     ratings.clear()
                     value.forEach { ratings.add(it.toObject()) }
+                    ratings.sortByDescending { it.timestamp }
                 }
             }
     }
@@ -100,6 +110,7 @@ fun CatalogItemDetail(
                 }
             )
         },
+        snackbarHost = { SnackbarHost(mainVM.snackbarHostState) },
         bottomBar = {
             Surface(shadowElevation = 4.dp, tonalElevation = 4.dp) {
                 Row(Modifier.padding(8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -115,19 +126,23 @@ fun CatalogItemDetail(
                     Button(
                         onClick = {
                             cartVM.addDish(item)
+                            mainVM.queueSnackbarMessage("Added ${item.name} to cart!")
                             onBack()
                         },
                         Modifier.weight(1f),
                         shape = MaterialTheme.shapes.small,
                         enabled = !addedToCart
                     ) {
-                        Text(if (addedToCart) "Added" else "Add to Order")
+                        Text(if (addedToCart) "Added to Order" else "Add to Order")
                     }
                 }
             }
         }
     ) {
-        LazyColumn(Modifier.fillMaxSize(), contentPadding = it, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        LazyColumn(
+            Modifier.fillMaxSize(),
+            contentPadding = it, verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             item {
                 Box {
                     GlideImage(
@@ -152,6 +167,7 @@ fun CatalogItemDetail(
                 Box(modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
+                    // Use a funky custom layout to overlay the card on the cover image
                     .layout { measurable, constraints ->
                         val place = measurable.measure(constraints)
                         layout(place.width, place.height + cardOffset) {
@@ -182,13 +198,15 @@ fun CatalogItemDetail(
                         fontWeight = FontWeight.Medium,
                         style = MaterialTheme.typography.titleLarge
                     )
-                    ReviewCreator(item)
+                    if (authVM.user == null) {
+                        Text(text = "You'll need to be signed in to leave a review")
+                    } else ReviewCreator(item)
                 }
             }
 
             // Reviews
             item {
-                Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text("Ratings", fontWeight = FontWeight.Medium, style = MaterialTheme.typography.titleLarge)
                     Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(20.dp)) {
                         Column {
@@ -203,13 +221,14 @@ fun CatalogItemDetail(
                         }
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                             for (i in 5 downTo 1) {
-                                RatingProgress(ratingFrequency[i] ?: 0f)
+                                val target by animateFloatAsState(targetValue = ratingFrequency[i] ?: 0f)
+                                RatingProgress(target)
                             }
                         }
                     }
                 }
             }
-            items(ratings) { review -> ReviewItem(review) }
+            items(ratings, key = { rating -> rating.id ?: "" }) { review -> ReviewItem(review) }
             if (ratings.isEmpty()) item {
                 Text(
                     "There are currently no ratings for this dish. You could be the first to write one!",
@@ -226,23 +245,28 @@ fun CatalogItemDetail(
 }
 
 @Composable
-private fun ReviewItem(review: Rating) {
+private fun ReviewItem(
+    review: Rating,
+) {
     OutlinedCard(
         Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
         shape = MaterialTheme.shapes.small
     ) {
-        Column(Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    Icons.Rounded.Star, "Rating",
-                    Modifier
-                        .padding(end = 4.dp)
-                        .size(24.dp),
-                    tint = colorResource(R.color.star_orange)
-                )
-                Text("%.1f".format(review.rating), style = MaterialTheme.typography.labelLarge)
+                for (i in 1..5) {
+                    Icon(
+                        Icons.Rounded.Star, "Rating",
+                        Modifier
+                            .size(16.dp),
+                        tint = if (review.rating > i) colorResource(R.color.star_orange) else LocalContentColor.current.copy(alpha = 0.2f)
+                    )
+                }
+                val added = review.formatTimestamp()
+                if (added != null) Text(added, Modifier.padding(start = 4.dp), style = MaterialTheme.typography.labelMedium)
             }
             Text(review.review)
         }

@@ -1,5 +1,6 @@
 package com.cryptoalgo.sweetRock.catalog.detail
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,15 +21,21 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.cryptoalgo.sweetRock.MainViewModel
 import com.cryptoalgo.sweetRock.catalog.CatalogViewModel
 import com.cryptoalgo.sweetRock.util.SmallCircularLoader
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReviewCreator(item: CatalogViewModel.CatalogItem) {
+fun ReviewCreator(
+    item: CatalogViewModel.CatalogItem,
+    mainVM: MainViewModel = viewModel(LocalContext.current as ComponentActivity)
+) {
     val coroutineScope = rememberCoroutineScope()
 
     var rating by rememberSaveable { mutableStateOf<Int?>(null) }
@@ -57,8 +64,10 @@ fun ReviewCreator(item: CatalogViewModel.CatalogItem) {
                         item.rate(rating!!.toFloat(), review.text)
                         review = TextFieldValue("")
                         rating = null
+                        mainVM.queueSnackbarMessage("Added your review!")
                     } catch (e: Exception) {
                         // TODO: Tell user about problem
+                        mainVM.queueSnackbarMessage("Could not add review: ${e.localizedMessage}")
                     } finally {
                         loading = false
                     }

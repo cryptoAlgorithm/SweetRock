@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 )
 @Composable
 fun Home(
-    model: MainViewModel = viewModel(),
+    model: MainViewModel = viewModel(LocalContext.current as ComponentActivity),
     cartVM: CartViewModel = viewModel(LocalContext.current as ComponentActivity),
     navigateToItemDetail: (String) -> Unit
 ) {
@@ -63,7 +63,7 @@ fun Home(
                             }
                         },
                         label = { Text(item.first) },
-                        selected = pagerState.targetPage == index,
+                        selected = pagerState.settledPage == index,
                         onClick = { scope.launch { pagerState.animateScrollToPage(index) }}
                     )
                 }
@@ -74,7 +74,7 @@ fun Home(
                 title = {
                     Column {
                         Text("Sweet Rock")
-                        AnimatedContent(targetState = items[pagerState.targetPage].first) { page ->
+                        AnimatedContent(targetState = items[pagerState.settledPage].first) { page ->
                             Text(page, style = MaterialTheme.typography.bodySmall)
                         }
                     }

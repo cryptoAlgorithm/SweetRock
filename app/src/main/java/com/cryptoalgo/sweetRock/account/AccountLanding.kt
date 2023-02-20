@@ -2,6 +2,7 @@ package com.cryptoalgo.sweetRock.account
 
 import android.app.Activity
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -67,7 +68,7 @@ private const val TAG = "Account"
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AccountLanding(
-    model: AccountViewModel = viewModel()
+    model: AccountViewModel = viewModel(LocalContext.current as ComponentActivity)
 ) {
     Box {
         Box {
@@ -109,7 +110,7 @@ fun AccountLanding(
 @Composable
 private fun SignedInLanding(
     modifier: Modifier = Modifier,
-    model: AccountViewModel = viewModel()
+    model: AccountViewModel = viewModel(LocalContext.current as ComponentActivity)
 ) {
     val user = model.user ?: return // Return early if the current user is null
 
@@ -145,7 +146,7 @@ private enum class SignInMethod {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SignInLaunchpad(
-    model: AccountViewModel = viewModel(),
+    model: AccountViewModel = viewModel(LocalContext.current as ComponentActivity),
     mainModel: MainViewModel = viewModel(),
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -177,7 +178,7 @@ private fun SignInLaunchpad(
                 try {
                     model.signIn(idToken)
                 } catch (e: Throwable) {
-                    mainModel.snackbarHostState.showSnackbar("Failed to sign you in with Google")
+                    mainModel.queueSnackbarMessage("Failed to sign you in with Google")
                 } finally {
                     loadingMethod = null
                 }
@@ -297,7 +298,7 @@ private fun SignInLaunchpad(
                     } catch (e: Throwable) {
                         // Problem initiating sign in flow
                         loadingMethod = null
-                        mainModel.snackbarHostState.showSnackbar("Could not initiate Google sign-in:\n${e.localizedMessage}")
+                        mainModel.queueSnackbarMessage("Could not initiate Google sign-in:\n${e.localizedMessage}")
                     }
                 }},
                 Modifier.fillMaxWidth(),
