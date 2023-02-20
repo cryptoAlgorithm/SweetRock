@@ -40,7 +40,7 @@ fun SweetRockHost(
         composable(
             "home",
             exitTransition = {
-                if (targetState.destination.route == "onboarding") fadeOut(tween(200)) else null
+                fadeOut(tween(200))
             }
         ) {
             Home(
