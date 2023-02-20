@@ -166,7 +166,7 @@ private fun CartItem(item: CartViewModel.CartItem, setQuantity: (Int) -> Unit) {
                 ) {
                     Text(it.toString(), fontWeight = FontWeight.Bold)
                 }
-                FilledTonalIconButton(onClick = { setQuantity(item.quantity+1) }, Modifier.size(28.dp)) {
+                FilledTonalIconButton(onClick = { setQuantity(item.quantity+1) }, Modifier.size(28.dp), enabled = item.quantity < 30) {
                     Icon(painterResource(R.drawable.add), contentDescription = "Add one", Modifier.size(24.dp))
                 }
             }

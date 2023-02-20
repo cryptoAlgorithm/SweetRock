@@ -36,7 +36,7 @@ class CartViewModel: ViewModel() {
 
     val totalPrice: Float get() {
         var sum = 0f
-        cart.forEach { sum += it.food.price }
+        cart.forEach { sum += it.food.price*it.quantity }
         return sum
     }
 }
