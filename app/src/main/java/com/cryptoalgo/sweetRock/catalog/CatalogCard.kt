@@ -16,11 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.cryptoalgo.sweetRock.model.CatalogItem
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun CatalogCard(
-    item: CatalogViewModel.CatalogItem,
+    item: CatalogItem,
     navigateToDetail: (itemID: String) -> Unit
 ) {
     ElevatedCard(

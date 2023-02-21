@@ -26,14 +26,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cryptoalgo.sweetRock.MainViewModel
-import com.cryptoalgo.sweetRock.catalog.CatalogViewModel
+import com.cryptoalgo.sweetRock.model.CatalogItem
 import com.cryptoalgo.sweetRock.util.SmallCircularLoader
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReviewCreator(
-    item: CatalogViewModel.CatalogItem,
+    item: CatalogItem,
     mainVM: MainViewModel = viewModel(LocalContext.current as ComponentActivity)
 ) {
     val coroutineScope = rememberCoroutineScope()

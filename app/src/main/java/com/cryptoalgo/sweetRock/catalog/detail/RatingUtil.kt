@@ -1,5 +1,7 @@
 package com.cryptoalgo.sweetRock.catalog.detail
 
+import com.cryptoalgo.sweetRock.model.Rating
+
 object RatingUtil {
     fun ratingFrequency(ratings: List<Rating>): HashMap<Int, Float> {
         val sums = hashMapOf<Int, Int>()

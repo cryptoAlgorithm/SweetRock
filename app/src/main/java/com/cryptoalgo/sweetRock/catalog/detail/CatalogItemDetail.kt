@@ -56,6 +56,7 @@ import com.cryptoalgo.sweetRock.R
 import com.cryptoalgo.sweetRock.account.AccountViewModel
 import com.cryptoalgo.sweetRock.cart.CartViewModel
 import com.cryptoalgo.sweetRock.catalog.CatalogViewModel
+import com.cryptoalgo.sweetRock.model.Rating
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase

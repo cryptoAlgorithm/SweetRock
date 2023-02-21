@@ -3,10 +3,10 @@ package com.cryptoalgo.sweetRock.cart
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import com.cryptoalgo.sweetRock.catalog.CatalogViewModel
+import com.cryptoalgo.sweetRock.model.CatalogItem
 
 class CartViewModel: ViewModel() {
-    data class CartItem(val food: CatalogViewModel.CatalogItem, val quantity: Int)
+    data class CartItem(val food: CatalogItem, val quantity: Int)
 
     val cart = mutableStateListOf<CartItem>()
 
@@ -14,7 +14,7 @@ class CartViewModel: ViewModel() {
         private const val TAG = "CartViewModel"
     }
 
-    fun addDish(item: CatalogViewModel.CatalogItem) {
+    fun addDish(item: CatalogItem) {
         if (inCart(item)) {
             Log.w(TAG, "Item ${item.id} already present in cart, ignoring")
             return
@@ -32,7 +32,7 @@ class CartViewModel: ViewModel() {
         cart[idx] = CartItem(item.food, quantity)
     }
 
-    fun inCart(item: CatalogViewModel.CatalogItem): Boolean = cart.any { it.food.id == item.id }
+    fun inCart(item: CatalogItem): Boolean = cart.any { it.food.id == item.id }
 
     val totalPrice: Float get() {
         var sum = 0f

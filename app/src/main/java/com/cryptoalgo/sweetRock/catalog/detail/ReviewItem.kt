@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cryptoalgo.sweetRock.MainViewModel
 import com.cryptoalgo.sweetRock.R
+import com.cryptoalgo.sweetRock.model.Rating
 import kotlinx.coroutines.launch
 
 @Composable
