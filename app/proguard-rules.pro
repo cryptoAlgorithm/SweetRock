@@ -21,3 +21,6 @@
 #-renamesourcefileattribute SourceFile
 
 -keep class com.cryptoalgo.sweetRock.model.** { *; }
+
+# Keep internal Firebase JSON models
+-keep class com.google.android.gms.internal.** { *; }
