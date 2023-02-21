@@ -56,7 +56,8 @@ fun About(onBack: () -> Unit) {
                     IconButton(onBack) {
                         Icon(Icons.Rounded.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
+                scrollBehavior = scrollBehavior
             )
         }
     ) {

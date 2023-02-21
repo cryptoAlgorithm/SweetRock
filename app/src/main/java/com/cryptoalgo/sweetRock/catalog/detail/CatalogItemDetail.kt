@@ -103,7 +103,8 @@ fun CatalogItemDetail(
                     IconButton(onBack) {
                         Icon(Icons.Rounded.Close, contentDescription = "Back")
                     }
-                }
+                },
+                scrollBehavior = scrollBehavior
             )
         },
         snackbarHost = { SnackbarHost(mainVM.snackbarHostState) },
